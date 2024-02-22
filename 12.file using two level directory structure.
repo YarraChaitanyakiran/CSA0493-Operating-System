@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_FILES_PER_DIRECTORY 100
+#define MAX_FILE_NAME_LENGTH 50
+#define MAX_DIRECTORIES 100
+
+typedef struct {
+    char name[MAX_FILE_NAME_LENGTH];
+    // You can add more attributes here as needed
+} File;
+
+typedef struct {
+    char name[MAX_FILE_NAME_LENGTH];
+    File files[MAX_FILES_PER_DIRECTORY];
+    int num_files;
+} Directory;
+
+Directory directories[MAX_DIRECTORIES];
+int num_directories = 0;
+
+// Function to create a new file
+void create_file(char *file_name, char *directory_name) {
+    int i;
+    for (i = 0; i < num_directories; i++) {
+        if (strcmp(directories[i].name, directory_name) == 0) {
+            if (directories[i].num_files < MAX_FILES_PER_DIRECTORY) {
+                strcpy(directories[i].files[directories[i].num_files].name, file_name);
+                directories[i].num_files++;
+                printf("File '%s' created in directory '%s'.\n", file_name, directory_name);
+                return;
+            } else {
+                printf("Error: Directory '%s' is full.\n", directory_name);
+                return;
+            }
+        }
+    }
+    printf("Error: Directory '%s' not found.\n", directory_name);
+}
+
+// Function to create a new directory
+void create_directory(char *directory_name) {
+    if (num_directories < MAX_DIRECTORIES) {
+        strcpy(directories[num_directories].name, directory_name);
+        directories[num_directories].num_files = 0;
+        num_directories++;
+        printf("Directory '%s' created.\n", directory_name);
+    } else {
+        printf("Error: Maximum number of directories reached.\n");
+    }
+}
+
+int main() {
+    create_directory("Documents");
+    create_directory("Pictures");
+    create_file("resume.docx", "Documents");
+    create_file("family.jpg", "Pictures");
+    create_file("project.pdf", "Documents");
+    create_file("vacation.jpg", "Pictures");
+    return 0;
+}
