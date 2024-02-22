@@ -1,0 +1,48 @@
+#include <stdio.h>
+
+#define FRAME_SIZE 3
+#define PAGE_REF_STRING_SIZE 10
+
+int page_faults = 0;
+
+
+int isInMemory(int page, int memory[], int frameSize) {
+    for (int i = 0; i < frameSize; i++) {
+        if (memory[i] == page) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+void FIFO(int pageReference[], int numPages) {
+    int memory[FRAME_SIZE] = {-1, -1, -1}; // Initialize memory with -1 indicating empty frame
+    int oldestPageIndex = 0; // Index of the oldest page in memory
+
+    for (int i = 0; i < numPages; i++) {
+        int page = pageReference[i];
+
+        if (!isInMemory(page, memory, FRAME_SIZE)) {
+            int replacedPage = memory[oldestPageIndex]; 
+            memory[oldestPageIndex] = page; 
+            oldestPageIndex = (oldestPageIndex + 1) % FRAME_SIZE;
+
+            printf("Page %d loaded into frame %d\n", page, oldestPageIndex - 1);
+            printf("Page %d replaced by page %d\n", replacedPage, page);
+        } else {
+            printf("Page %d already in memory\n", page);
+        }
+    }
+}
+
+int main() {
+    int pageReferenceString[PAGE_REF_STRING_SIZE] = {0, 1, 2, 3, 2, 4, 5, 3, 4, 6};
+    int numPages = PAGE_REF_STRING_SIZE;
+
+    FIFO(pageReferenceString, numPages);
+
+    printf("Total page faults: %d\n", page_faults);
+
+    return 0;
+}
