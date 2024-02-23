@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define RECORD_SIZE 100
+#define MAX_RECORDS 100
+
+// Function to read records from the file
+void readRecords(FILE *file) {
+    char record[RECORD_SIZE];
+    rewind(file); // Move file pointer to the beginning
+
+    printf("Records in the file:\n");
+    while (fread(record, sizeof(char), RECORD_SIZE, file) == RECORD_SIZE) {
+        printf("%s\n", record);
+    }
+}
+
+// Function to write records to the file
+void writeRecord(FILE *file, const char *data) {
+    fseek(file, 0, SEEK_END); // Move file pointer to the end
+    fwrite(data, sizeof(char), RECORD_SIZE, file);
+    fflush(file); // Flush the buffer to ensure data is written immediately
+}
+
+int main() {
+    FILE *file;
+    char filename[] = "file_system.dat";
+    char record[RECORD_SIZE];
+
+    // Open the file in binary mode for reading and writing
+    file = fopen(filename, "rb+");
+    if (file == NULL) {
+        // File doesn't exist, create a new one
+        file = fopen(filename, "wb+");
+        if (file == NULL) {
+            printf("Error creating file.\n");
+            return 1;
+        }
+    }
+
+    printf("Enter records to write (type 'exit' to stop):\n");
+    while (1) {
+        printf("> ");
+        fgets(record, RECORD_SIZE, stdin);
+
+        // Remove newline character
+        record[strcspn(record, "\n")] = 0;
+
+        if (strcmp(record, "exit") == 0) {
+            break;
+        }
+
+        // Write the record to the file
+        writeRecord(file, record);
+    }
+
+    // Read and display all records in the file
+    readRecords(file);
+
+    // Close the file
+    fclose(file);
+
+    return 0;
+}
