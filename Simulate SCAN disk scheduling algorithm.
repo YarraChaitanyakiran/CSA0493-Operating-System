@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_CYLINDERS 200
+#define MAX_REQUESTS 50
+
+// Function to sort an array in ascending order
+void sortArray(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+
+// Function to simulate SCAN disk scheduling algorithm
+void scanDisk(int cylinders[], int numCylinders, int requests[], int numRequests, int startCylinder) {
+    int headMovement = 0;
+    int currentCylinder = startCylinder;
+    bool movingUp = true;
+
+    // Sort the requests
+    sortArray(requests, numRequests);
+
+    // Find the index where startCylinder exists in requests
+    int startIndex = 0;
+    for (int i = 0; i < numRequests; i++) {
+        if (requests[i] == startCylinder) {
+            startIndex = i;
+            break;
+        }
+    }
+
+    // Scan towards higher cylinder numbers
+    printf("Head movement sequence:\n");
+    for (int i = startIndex; i < numRequests; i++) {
+        printf("%d -> ", requests[i]);
+        headMovement += abs(currentCylinder - requests[i]);
+        currentCylinder = requests[i];
+    }
+
+    // Move to the highest cylinder
+    printf("%d -> ", cylinders[numCylinders - 1]);
+    headMovement += abs(currentCylinder - cylinders[numCylinders - 1]);
+    currentCylinder = cylinders[numCylinders - 1];
+
+    // Scan towards lower cylinder numbers
+    for (int i = numRequests - 1; i >= 0; i--) {
+        printf("%d -> ", requests[i]);
+        headMovement += abs(currentCylinder - requests[i]);
+        currentCylinder = requests[i];
+    }
+
+    printf("\nTotal head movement: %d\n", headMovement);
+}
+
+int main() {
+    int cylinders[MAX_CYLINDERS];
+    int requests[MAX_REQUESTS];
+    int numCylinders, numRequests, startCylinder;
+
+    printf("Enter the number of cylinders on the disk: ");
+    scanf("%d", &numCylinders);
+
+    printf("Enter the cylinder numbers (space-separated): ");
+    for (int i = 0; i < numCylinders; i++) {
+        scanf("%d", &cylinders[i]);
+    }
+
+    printf("Enter the number of requests: ");
+    scanf("%d", &numRequests);
+
+    printf("Enter the request sequence (space-separated): ");
+    for (int i = 0; i < numRequests; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the start cylinder: ");
+    scanf("%d", &startCylinder);
+
+    scanDisk(cylinders, numCylinders, requests, numRequests, startCylinder);
+
+    return 0;
+}
