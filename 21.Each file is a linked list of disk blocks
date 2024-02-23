@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BLOCK_SIZE 100
+#define MAX_FILENAME_LENGTH 50
+
+// Structure to represent a block
+typedef struct Block {
+    char data[BLOCK_SIZE];
+    struct Block *next;
+} Block;
+
+// Structure to represent a file
+typedef struct {
+    char filename[MAX_FILENAME_LENGTH];
+    Block *firstBlock;
+    Block *lastBlock;
+} File;
+
+// Function to initialize a file
+void initializeFile(File *file, const char *filename) {
+    strncpy(file->filename, filename, MAX_FILENAME_LENGTH);
+    file->firstBlock = NULL;
+    file->lastBlock = NULL;
+}
+
+// Function to add a block to the file
+void addBlockToFile(File *file, Block *block) {
+    if (file->firstBlock == NULL) {
+        file->firstBlock = block;
+    } else {
+        file->lastBlock->next = block;
+    }
+    file->lastBlock = block;
+}
+
+// Function to display the contents of a file
+void displayFile(File *file) {
+    printf("File: %s\n", file->filename);
+    printf("Blocks:\n");
+    Block *currentBlock = file->firstBlock;
+    while (currentBlock != NULL) {
+        printf("%s\n", currentBlock->data);
+        currentBlock = currentBlock->next;
+    }
+}
+
+int main() {
+    File myFile;
+    initializeFile(&myFile, "myfile.txt");
+
+    // Creating blocks
+    Block *block1 = (Block *)malloc(sizeof(Block));
+    strncpy(block1->data, "This is block 1", BLOCK_SIZE);
+    block1->next = NULL;
+
+    Block *block2 = (Block *)malloc(sizeof(Block));
+    strncpy(block2->data, "This is block 2", BLOCK_SIZE);
+    block2->next = NULL;
+
+    Block *block3 = (Block *)malloc(sizeof(Block));
+    strncpy(block3->data, "This is block 3", BLOCK_SIZE);
+    block3->next = NULL;
+
+    // Adding blocks to file
+    addBlockToFile(&myFile, block1);
+    addBlockToFile(&myFile, block2);
+    addBlockToFile(&myFile, block3);
+
+    // Displaying file contents
+    displayFile(&myFile);
+
+    // Freeing allocated memory
+    free(block1);
+    free(block2);
+    free(block3);
+
+    return 0;
+}
