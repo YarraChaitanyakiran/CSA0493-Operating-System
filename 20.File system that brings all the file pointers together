@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BLOCK_SIZE 100
+#define MAX_BLOCKS_PER_FILE 100
+#define MAX_FILENAME_LENGTH 50
+
+// Structure to represent a block
+typedef struct {
+    char data[BLOCK_SIZE];
+} Block;
+
+// Structure to represent a file
+typedef struct {
+    char filename[MAX_FILENAME_LENGTH];
+    int numBlocks;
+    int indexBlock[MAX_BLOCKS_PER_FILE];
+} File;
+
+// Function to initialize a file
+void initializeFile(File *file, const char *filename) {
+    strncpy(file->filename, filename, MAX_FILENAME_LENGTH);
+    file->numBlocks = 0;
+}
+
+// Function to add a block to a file
+void addBlockToFile(File *file, int blockNumber) {
+    if (file->numBlocks < MAX_BLOCKS_PER_FILE) {
+        file->indexBlock[file->numBlocks] = blockNumber;
+        file->numBlocks++;
+    } else {
+        printf("Cannot add more blocks to the file. Maximum blocks reached.\n");
+    }
+}
+
+// Function to display the contents of a file
+void displayFile(File *file) {
+    printf("File: %s\n", file->filename);
+    printf("Blocks:\n");
+    for (int i = 0; i < file->numBlocks; i++) {
+        printf("Block %d: %s\n", i+1, file->indexBlock[i]);
+    }
+}
+
+int main() {
+    File myFile;
+    initializeFile(&myFile, "myfile.txt");
+
+    addBlockToFile(&myFile, 1);
+    addBlockToFile(&myFile, 2);
+    addBlockToFile(&myFile, 3);
+
+    displayFile(&myFile);
+
+    return 0;
+}
