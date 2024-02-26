@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void main() {
+    int files[50]; // Array to track allocated blocks (0 for free, 1 for allocated)
+    int startBlock, len, j, k, ch;
+
+    for (int i = 0; i < 50; i++)
+        files[i] = 0; // Initialize all blocks as free
+
+    printf("Files Allocated are:\n");
+    while (1) {
+        printf("Enter the starting block and length of the file: ");
+        scanf("%d %d", &startBlock, &len);
+
+        int flag = 0;
+        for (j = startBlock; j < startBlock + len; j++) {
+            if (files[j] == 0)
+                flag++;
+        }
+
+        if (len == flag) {
+            for (k = startBlock; k < startBlock + len; k++) {
+                if (files[k] == 0) {
+                    files[k] = 1;
+                    printf("%d\t%d\n", k, files[k]);
+                }
+            }
+            if (k != startBlock + len - 1)
+                printf("The file is allocated to the disk\n");
+        } else {
+            printf("The file is not allocated to the disk\n");
+        }
+
+        printf("Do you want to enter more files?\n");
+        printf("Press 1 for YES, 0 for NO: ");
+        scanf("%d", &ch);
+        if (ch == 0)
+            break;
+    }
+}
