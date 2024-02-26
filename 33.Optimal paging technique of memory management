@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void main() {
+    int alloc[50], base[50], frame[50], job[50];
+    int i, n, pa, fs, ps, nf, temp;
+
+    clrscr();
+    printf("\n\t\tPAGING\n");
+    printf("\nEnter the physical address space: ");
+    scanf("%d", &pa);
+    printf("Enter the page size: ");
+    scanf("%d", &ps);
+
+    nf = pa / ps;
+    printf("\nNumber of frames = %d\n", nf);
+
+    for (i = 0; i < nf; i++) {
+        alloc[i] = 0;
+        printf("Enter job number %d: ", i + 1);
+        scanf("%d", &job[i]);
+
+        // Check if the job can fit
+        if (/* Condition to check if job can fit */) {
+            temp = rand() % nf;
+            while (alloc[temp] == 1)
+                temp = rand() % nf;
+
+            alloc[temp] = 1;
+            frame[i] = temp;
+            base[i] = frame[i] * ps;
+
+            printf("%d\t%d\t%d\n", i, frame[i], base[i]);
+        } else {
+            printf("Job %d can't fit in the memory.\n", i + 1);
+            break;
+        }
+    }
+
+    getch();
+}
